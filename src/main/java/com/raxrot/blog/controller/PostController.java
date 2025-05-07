@@ -1,14 +1,13 @@
 package com.raxrot.blog.controller;
 
 import com.raxrot.blog.dto.PostDTO;
+import com.raxrot.blog.dto.PostResponse;
 import com.raxrot.blog.service.PostService;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Slf4j
 @RestController
@@ -28,9 +27,14 @@ public class PostController {
     }
 
     @GetMapping
-    public ResponseEntity<List<PostDTO>> getAll() {
-        log.info("GET /api/posts - Fetching all posts");
-        return ResponseEntity.ok(postService.getAllPosts());
+    public ResponseEntity<PostResponse> getAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size,
+            @RequestParam(defaultValue = "id") String sortBy,
+            @RequestParam(defaultValue = "asc") String sortDir
+    ) {
+        log.info("GET /api/posts?page={}&size={}&sortBy={}&sortDir={}", page, size, sortBy, sortDir);
+        return ResponseEntity.ok(postService.getAllPosts(page, size, sortBy, sortDir));
     }
 
     @GetMapping("/{id}")
