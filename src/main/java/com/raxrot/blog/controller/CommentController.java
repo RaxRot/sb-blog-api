@@ -2,6 +2,9 @@ package com.raxrot.blog.controller;
 
 import com.raxrot.blog.dto.CommentDTO;
 import com.raxrot.blog.service.CommentService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -20,6 +23,8 @@ public class CommentController {
         this.commentService = commentService;
     }
 
+    @Operation(summary = "Create a comment for a post")
+    @ApiResponse(responseCode = "201", description = "Comment created successfully")
     @PostMapping
     public ResponseEntity<CommentDTO> createComment(
             @PathVariable Long postId,
@@ -30,12 +35,19 @@ public class CommentController {
         return new ResponseEntity<>(created, HttpStatus.CREATED);
     }
 
+    @Operation(summary = "Get all comments for a post")
+    @ApiResponse(responseCode = "200", description = "List of comments")
     @GetMapping
     public ResponseEntity<List<CommentDTO>> getCommentsByPostId(@PathVariable Long postId) {
         log.info("GET /api/posts/{}/comments - Fetching comments", postId);
         return ResponseEntity.ok(commentService.getCommentsByPostId(postId));
     }
 
+    @Operation(summary = "Get a single comment by ID for a post")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Comment found"),
+            @ApiResponse(responseCode = "404", description = "Comment not found")
+    })
     @GetMapping("/{commentId}")
     public ResponseEntity<CommentDTO> getCommentById(
             @PathVariable Long postId,
@@ -45,6 +57,11 @@ public class CommentController {
         return ResponseEntity.ok(commentService.getCommentById(postId, commentId));
     }
 
+    @Operation(summary = "Update a comment by ID")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Comment updated"),
+            @ApiResponse(responseCode = "404", description = "Comment not found")
+    })
     @PutMapping("/{commentId}")
     public ResponseEntity<CommentDTO> updateComment(
             @PathVariable Long postId,
@@ -55,6 +72,8 @@ public class CommentController {
         return ResponseEntity.ok(commentService.updateComment(postId, commentId, commentDTO));
     }
 
+    @Operation(summary = "Delete a comment by ID")
+    @ApiResponse(responseCode = "204", description = "Comment deleted")
     @DeleteMapping("/{commentId}")
     public ResponseEntity<Void> deleteComment(
             @PathVariable Long postId,
