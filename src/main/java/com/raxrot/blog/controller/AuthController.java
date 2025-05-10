@@ -2,13 +2,18 @@ package com.raxrot.blog.controller;
 
 import com.raxrot.blog.dto.LoginDTO;
 import com.raxrot.blog.service.AuthService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
@@ -17,9 +22,15 @@ public class AuthController {
         this.authService = authService;
     }
 
-    @PostMapping(value = {"/login","/signin"})
+    @Operation(summary = "Login user with username or email and password")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Login successful"),
+            @ApiResponse(responseCode = "401", description = "Invalid credentials")
+    })
+    @PostMapping(value = {"/login", "/signin"})
     public ResponseEntity<String> login(@Valid @RequestBody LoginDTO loginDTO) {
-       String response = authService.login(loginDTO);
-       return ResponseEntity.ok(response);
+        log.info("POST /api/auth/login - Attempting login for: {}", loginDTO.getUsernameOrEmail());
+        String response = authService.login(loginDTO);
+        return ResponseEntity.ok(response);
     }
 }
