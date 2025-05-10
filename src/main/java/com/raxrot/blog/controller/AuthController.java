@@ -1,6 +1,7 @@
 package com.raxrot.blog.controller;
 
 import com.raxrot.blog.dto.LoginDTO;
+import com.raxrot.blog.dto.RegisterDTO;
 import com.raxrot.blog.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -30,7 +31,21 @@ public class AuthController {
     @PostMapping(value = {"/login", "/signin"})
     public ResponseEntity<String> login(@Valid @RequestBody LoginDTO loginDTO) {
         log.info("POST /api/auth/login - Attempting login for: {}", loginDTO.getUsernameOrEmail());
+
         String response = authService.login(loginDTO);
+        return ResponseEntity.ok(response);
+    }
+
+    @Operation(summary = "Register a new user account")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Registration successful"),
+            @ApiResponse(responseCode = "400", description = "Validation failed or user already exists")
+    })
+    @PostMapping(value = {"/register","signup"})
+    public ResponseEntity<String>register(@Valid @RequestBody RegisterDTO registerDTO) {
+        log.info("POST /api/auth/register - Registering user: {}", registerDTO.getUsername());
+
+        String response = authService.register(registerDTO);
         return ResponseEntity.ok(response);
     }
 }
