@@ -46,6 +46,8 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public String register(RegisterDTO registerDTO) {
+        log.info("Register attempt for: {}", registerDTO.getUsername());
+
         //add check for username exist in DB
         if (userRepository.existsByUsername(registerDTO.getUsername())) {
             throw new BlogAPIException("Username is already exist!");
@@ -65,6 +67,9 @@ public class AuthServiceImpl implements AuthService {
         roles.add(userRole);
         user.setRoles(roles);
         userRepository.save(user);
+
+        log.info("User registered successfully: {}", user.getUsername());
+
         return "User registered successfully";
     }
 }
