@@ -35,4 +35,11 @@ public class GlobalExceptionHandler {
         errors.put("message", "Invalid username or password");
         return new ResponseEntity<>(errors, HttpStatus.UNAUTHORIZED);
     }
+
+    @ExceptionHandler(BlogAPIException.class)
+    public ResponseEntity<Map<String, String>> handleBlogAPIException(BlogAPIException ex) {
+        Map<String, String> error = new HashMap<>();
+        error.put("message", ex.getMessage());
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
 }
