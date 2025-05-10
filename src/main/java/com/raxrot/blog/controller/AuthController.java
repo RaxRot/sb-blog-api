@@ -1,5 +1,6 @@
 package com.raxrot.blog.controller;
 
+import com.raxrot.blog.dto.JWTAuthResponse;
 import com.raxrot.blog.dto.LoginDTO;
 import com.raxrot.blog.dto.RegisterDTO;
 import com.raxrot.blog.service.AuthService;
@@ -29,11 +30,13 @@ public class AuthController {
             @ApiResponse(responseCode = "401", description = "Invalid credentials")
     })
     @PostMapping(value = {"/login", "/signin"})
-    public ResponseEntity<String> login(@Valid @RequestBody LoginDTO loginDTO) {
+    public ResponseEntity<JWTAuthResponse> login(@Valid @RequestBody LoginDTO loginDTO) {
         log.info("POST /api/auth/login - Attempting login for: {}", loginDTO.getUsernameOrEmail());
 
-        String response = authService.login(loginDTO);
-        return ResponseEntity.ok(response);
+        String token = authService.login(loginDTO);
+        JWTAuthResponse jwtAuthResponse=new JWTAuthResponse();
+        jwtAuthResponse.setAccessToken(token);
+        return ResponseEntity.ok(jwtAuthResponse);
     }
 
     @Operation(summary = "Register a new user account")
