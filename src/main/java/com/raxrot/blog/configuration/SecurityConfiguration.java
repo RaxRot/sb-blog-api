@@ -37,6 +37,7 @@ public class SecurityConfiguration {
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(csrf -> csrf.disable());
         http.authorizeHttpRequests(request -> request
+                .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/posts/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.PUT, "/api/posts/**").hasRole("ADMIN")
